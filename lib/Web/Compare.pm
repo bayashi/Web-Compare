@@ -51,7 +51,7 @@ __END__
 
 =head1 NAME
 
-Web::Compare - one line description
+Web::Compare - Compare web pages
 
 
 =head1 SYNOPSIS
@@ -64,14 +64,28 @@ Web::Compare - one line description
 
 =head1 DESCRIPTION
 
-Web::Compare is
+Web::Compare is the tool for comparing web pages.
+
+It might be useful like below.
+
+    use Web::Compare;
+    
+    my $wc = Web::Compare->new(
+        'http://staging.example.com/foo/bar',
+        'http://production.example.com/foo/bar',
+    );
+    warn $wc->report;
+
+To compare staging web page to production web page.
 
 
 =head1 METHODS
 
-=head2 new
+=head2 new($left_url, $right_url, $options_ref)
 
 constractor
+
+C<$left_url> and C<$right_url> is the URL or these should be L<HTTP::Request> object.
 
 =head2 report
 
@@ -91,8 +105,6 @@ Dai Okabayashi E<lt>bayashi@cpan.orgE<gt>
 
 
 =head1 SEE ALSO
-
-L<Other::Module>
 
 
 =head1 LICENSE
