@@ -13,10 +13,17 @@ my $builder = Module::Build->new(
     },
     build_requires      => {
         'Test::More' => 0.88,
+        'Test::Fake::HTTPD' => 0,
     },
     requires => {
         'perl' => '5.008001',
+        'strict' => 0,
+        'warnings' => 0,
         'Carp' => 0,
+        'HTTP::Request' => 0,
+        'Furl' => 0,
+        'Diff::LibXDiff' => 0,
+        'Class::Accessor::Lite' => 0,
     },
     add_to_cleanup      => [ 'Web-Compare-*' ],
     meta_merge     => {

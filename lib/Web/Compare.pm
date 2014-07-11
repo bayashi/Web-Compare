@@ -2,14 +2,47 @@ package Web::Compare;
 use strict;
 use warnings;
 use Carp qw/croak/;
+use HTTP::Request;
+use Furl;
+use Diff::LibXDiff;
+
+use Class::Accessor::Lite (
+    ro  => [qw/ req ua /],
+);
 
 our $VERSION = '0.01';
 
 sub new {
-    my $class = shift;
-    my $args  = shift || +{};
+    my ($class, $left, $right, $options) = @_;
 
-    bless $args, $class;
+    bless {
+        req => [ _init_req($left), _init_req($right) ],
+        ua  => $options->{ua} || Furl->new,
+    }, $class;
+}
+
+sub _init_req {
+    my $u = shift;
+
+    unless (ref $u eq 'HTTP::Request') {
+        $u = HTTP::Request->new(GET => $u);
+    }
+
+    return $u;
+}
+
+sub report {
+    my $self = shift;
+
+    my @responses;
+    for my $req ( @{ $self->req } ) {
+        my $res = $self->ua->request($req);
+        push @responses, $res->content;
+    }
+
+    my $diff = Diff::LibXDiff->diff(@responses);
+
+    return $diff;
 }
 
 1;
@@ -24,11 +57,25 @@ Web::Compare - one line description
 =head1 SYNOPSIS
 
     use Web::Compare;
+    
+    my $wc = Web::Compare->new($left_url, $right_url);
+    warn $wc->report;
 
 
 =head1 DESCRIPTION
 
 Web::Compare is
+
+
+=head1 METHODS
+
+=head2 new
+
+constractor
+
+=head2 report
+
+Send requests and report diff
 
 
 =head1 REPOSITORY
