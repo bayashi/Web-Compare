@@ -17,6 +17,7 @@
       "build" : {
          "requires" : {
             "LWP::UserAgent" : "0",
+            "String::Diff" : "0",
             "Test::Fake::HTTPD" : "0",
             "Test::More" : "0.88"
          }

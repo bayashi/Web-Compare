@@ -15,6 +15,7 @@ my $builder = Module::Build->new(
         'Test::More' => 0.88,
         'Test::Fake::HTTPD' => 0,
         'LWP::UserAgent' => 0,
+        'String::Diff' => 0,
     },
     requires => {
         'perl' => '5.008001',

@@ -7,7 +7,7 @@ use Furl;
 use Diff::LibXDiff;
 
 use Class::Accessor::Lite (
-    ro  => [qw/ req ua /],
+    ro  => [qw/ req ua diff /],
 );
 
 our $VERSION = '0.01';
@@ -18,6 +18,7 @@ sub new {
     bless {
         req => [ _init_req($left), _init_req($right) ],
         ua  => $options->{ua} || Furl->new,
+        diff => $options->{diff},
     }, $class;
 }
 
@@ -40,7 +41,13 @@ sub report {
         push @responses, $res->content;
     }
 
-    my $diff = Diff::LibXDiff->diff(@responses);
+    my $diff;
+    if ($self->diff) {
+        $diff = $self->diff->(@responses);
+    }
+    else {
+        $diff = Diff::LibXDiff->diff(@responses);
+    }
 
     return $diff;
 }
@@ -81,11 +88,39 @@ To compare staging web page to production web page.
 
 =head1 METHODS
 
-=head2 new($left_url, $right_url, $options_ref)
+=head2 new($left_url, $right_url[, $options_ref])
 
 constractor
 
 C<$left_url> and C<$right_url> is the URL or these should be L<HTTP::Request> object.
+
+C<$options_ref> follows bellow params.
+
+=over
+
+=item B<ua>
+
+The user agent object what you want.
+
+=item B<diff>
+
+By default, C<Web::Compare> uses L<Diff::LibXDiff> for reporting diff.
+If you want to use an other diff tool, you'll set C<diff> param as code ref.
+
+    use Web::Compare;
+    use String::Diff qw//;
+    
+    my $wc = Web::Compare->new(
+        $lefturl, $righturl, {
+            diff => sub {
+                my ($left, $right) = @_;
+
+                String::Diff::diff_merge($left, $right);
+            },
+        },
+    );
+
+=back
 
 =head2 report
 
