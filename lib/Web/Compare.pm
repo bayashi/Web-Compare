@@ -10,7 +10,7 @@ use Class::Accessor::Lite (
     ro  => [qw/ req ua diff /],
 );
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 sub new {
     my ($class, $left, $right, $options) = @_;
