@@ -1,5 +1,9 @@
 Revision history for Perl extension Web::Compare
 
+0.03    Thu Jul 17 21:51:31 JST 2014
+        - new feature: implement hooks
+        - refactor
+
 0.02    Sat Jul 12 13:18:37 JST 2014
         - new feature: use an other diff tool
 
