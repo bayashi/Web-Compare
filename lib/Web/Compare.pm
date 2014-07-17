@@ -7,7 +7,13 @@ use Furl;
 use Diff::LibXDiff;
 
 use Class::Accessor::Lite (
-    ro  => [qw/ req ua diff hook_before hook_after /],
+    ro  => [qw/
+        req
+        ua
+        diff
+        hook_before
+        hook_after
+    /],
 );
 
 our $VERSION = '0.02';
