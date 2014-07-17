@@ -7,7 +7,7 @@ use Furl;
 use Diff::LibXDiff;
 
 use Class::Accessor::Lite (
-    ro  => [qw/ req ua diff /],
+    ro  => [qw/ req ua diff hook_before hook_after /],
 );
 
 our $VERSION = '0.02';
@@ -19,6 +19,8 @@ sub new {
         req => [ _init_req($left), _init_req($right) ],
         ua  => $options->{ua} || Furl->new,
         diff => $options->{diff},
+        hook_before => $options->{hook_before},
+        hook_after  => $options->{hook_after},
     }, $class;
 }
 
@@ -37,8 +39,13 @@ sub report {
 
     my @responses;
     for my $req ( @{ $self->req } ) {
+        if ($self->hook_before) {
+            $self->hook_before->($self, $req);
+        }
         my $res = $self->ua->request($req);
-        push @responses, $res->content;
+        my $content = $self->hook_after
+                    ? $self->hook_after->($self, $res, $req) : $res->content;
+        push @responses, $content;
     }
 
     my $diff;
@@ -116,6 +123,28 @@ If you want to use an other diff tool, you'll set C<diff> param as code ref.
                 my ($left, $right) = @_;
 
                 String::Diff::diff_merge($left, $right);
+            },
+        },
+    );
+
+=item B<hook_before>
+
+=item B<hook_after>
+
+There are hooks around the request.
+
+    use Web::Compare;
+    
+    my $wc = Web::Compare->new(
+        $lefturl, $righturl, {
+            hook_before => sub {
+                my ($self, $req) = @_;
+                $req->header('X-foo' => 'baz');
+            },
+            hook_after => sub {
+                my ($self, $res, $req) = @_;
+                (my $content = $res->content) =~ s!Hello!Hi!;
+                return $content;
             },
         },
     );
