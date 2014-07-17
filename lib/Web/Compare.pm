@@ -43,7 +43,17 @@ sub _init_req {
 sub report {
     my $self = shift;
 
+    my $responses = $self->_request;
+    my $diff = $self->_diff($responses);
+
+    return $diff;
+}
+
+sub _request {
+    my $self = shift;
+
     my @responses;
+
     for my $req ( @{ $self->req } ) {
         if ($self->hook_before) {
             $self->hook_before->($self, $req);
@@ -54,12 +64,19 @@ sub report {
         push @responses, $content;
     }
 
+    return \@responses;
+}
+
+sub _diff {
+    my ($self, $responses) = @_;
+
     my $diff;
+
     if ($self->diff) {
-        $diff = $self->diff->(@responses);
+        $diff = $self->diff->(@{$responses});
     }
     else {
-        $diff = Diff::LibXDiff->diff(@responses);
+        $diff = Diff::LibXDiff->diff(@{$responses});
     }
 
     return $diff;
