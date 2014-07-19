@@ -12,6 +12,7 @@ use Class::Accessor::Lite (
         diff
         hook_before
         hook_after
+        on_error
     /],
 );
 
@@ -26,6 +27,7 @@ sub new {
         diff => $options->{diff},
         hook_before => $options->{hook_before},
         hook_after  => $options->{hook_after},
+        on_error    => $options->{on_error},
     }, $class;
 }
 
@@ -58,6 +60,12 @@ sub _request {
             $self->hook_before->($self, $req);
         }
         my $res = $self->ua->request($req);
+        unless ($res->is_success) {
+            if ($self->on_error) {
+                $self->on_error->($self, $res, $req);
+            }
+            die 'Error: '.$req->uri. "\n". $res->status_line. "\n";
+        }
         my $content = $self->hook_after
                     ? $self->hook_after->($self, $res, $req) : $res->content;
         push @responses, $content;
@@ -156,6 +164,22 @@ There are hooks around the request.
                 my ($self, $res, $req) = @_;
                 (my $content = $res->content) =~ s!Hello!Hi!;
                 return $content;
+            },
+        },
+    );
+
+=item B<on_error>
+
+When a request was failed, C<on_error> callback is invoked if you set this option as code ref.
+
+    use Web::Compare;
+    use Data::Dumper;
+
+    my $wc = Web::Compare->new(
+        $lefturl, $righturl, {
+            on_error => sub {
+                my ($self, $res, $req) = @_;
+                warn Dumper($req, $res);
             },
         },
     );
