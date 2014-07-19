@@ -1,5 +1,10 @@
 Revision history for Perl extension Web::Compare
 
+0.04    Sat Jul 19 23:27:43 JST 2014
+        - new feature: on_error callback
+        - removed Carp dependency
+        - bit enhanced POD
+
 0.03    Thu Jul 17 21:51:31 JST 2014
         - new feature: implement hooks
         - refactor

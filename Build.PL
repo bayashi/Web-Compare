@@ -21,7 +21,6 @@ my $builder = Module::Build->new(
         'perl' => '5.008001',
         'strict' => 0,
         'warnings' => 0,
-        'Carp' => 0,
         'HTTP::Request' => 0,
         'Furl' => 0,
         'Diff::LibXDiff' => 0,
