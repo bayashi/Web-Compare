@@ -103,17 +103,24 @@ Web::Compare - Compare web pages
 
 Web::Compare is the tool for comparing web pages.
 
-It might be useful like below.
+It might be useful for comparing staging web page to production web page like below.
 
     use Web::Compare;
     
     my $wc = Web::Compare->new(
         'http://staging.example.com/foo/bar',
         'http://production.example.com/foo/bar',
+        {
+            hook_before => sub {
+                my ($self, $req) = @_;
+
+                if ($req->uri =~ /staging\./) {
+                    $req->authorization_basic('id', 'password');
+                }
+            },
+        }
     );
     warn $wc->report;
-
-To compare staging web page to production web page.
 
 
 =head1 METHODS
