@@ -139,24 +139,6 @@ C<$options_ref> follows bellow params.
 
 The user agent object what you want.
 
-=item B<diff>
-
-By default, C<Web::Compare> uses L<Diff::LibXDiff> for reporting diff.
-If you want to use an other diff tool, you'll set C<diff> param as code ref.
-
-    use Web::Compare;
-    use String::Diff qw//;
-    
-    my $wc = Web::Compare->new(
-        $lefturl, $righturl, {
-            diff => sub {
-                my ($left, $right) = @_;
-
-                String::Diff::diff_merge($left, $right);
-            },
-        },
-    );
-
 =item B<hook_before>
 
 =item B<hook_after>
@@ -175,6 +157,24 @@ There are hooks around the request.
                 my ($self, $res, $req) = @_;
                 (my $content = $res->content) =~ s!Hello!Hi!;
                 return $content;
+            },
+        },
+    );
+
+=item B<diff>
+
+By default, C<Web::Compare> uses L<Diff::LibXDiff> for reporting diff.
+If you want to use an other diff tool, you'll set C<diff> param as code ref.
+
+    use Web::Compare;
+    use String::Diff qw//;
+    
+    my $wc = Web::Compare->new(
+        $lefturl, $righturl, {
+            diff => sub {
+                my ($left, $right) = @_;
+
+                String::Diff::diff_merge($left, $right);
             },
         },
     );
