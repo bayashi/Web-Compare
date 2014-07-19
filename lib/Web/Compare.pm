@@ -1,7 +1,6 @@
 package Web::Compare;
 use strict;
 use warnings;
-use Carp qw/croak/;
 use HTTP::Request;
 use Furl;
 use Diff::LibXDiff;
